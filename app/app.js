@@ -619,29 +619,7 @@ function forceInfoboxResize() {
 
 
 
-// Infobox for Polygons: Add attributes to the Cesium infobox for the new features
-viewer.selectedEntityChanged.addEventListener(function () {
-    var entity = viewer.selectedEntity;
-    if (Cesium.defined(entity)) {
-        // Check if the entity has the customInfobox property
-        if (entity.customInfobox2) {
-            var id = entity.id;
-            
 
-            // Create infobox content
-            var infoboxContent2 = `
-                <table>
-                    <tr><td>ID:</td><td>${id}</td></tr>
-                    
-                </table>
-            `;
-
-            // Set the infobox description
-            entity.description = new Cesium.ConstantProperty(infoboxContent2);
-            entity.name = "Polygon";
-        }
-    }
-});
 // Event listeners for starting and stopping favorite selection mode
 document.getElementById('startFavorites').addEventListener('click', function () {
     document.getElementById('startFavorites').style.display = 'none';
@@ -652,7 +630,7 @@ document.getElementById('startFavorites').addEventListener('click', function () 
     toggleView(-90, 0.01, 1200);
     document.getElementById('zweid3dButton').style.display = "none";
     viewer.infoBox.container.style.display = 'none'; // Make sure Infobox does not show up when elements are clicked
-    document.getElementById('drawPolygonButton').style.display = 'none'; //disable draw Polygon while Favorite Selection
+    ; //disable draw Polygon while Favorite Selection
     
   });
 
@@ -666,266 +644,13 @@ document.getElementById('stopFavorites').addEventListener('click', function () {
     document.getElementById('zweid3dButton').style.display = "block";
     viewer.infoBox.container.style.display = 'block'; // Make sure Infobox shows up again when elements are clicked
     hideFavoriteInput();
-    document.getElementById('drawPolygonButton').style.display = 'inline-block'; //enable draw Polygon after Favorite Selection
-});
-
-
-// Polygon Tool 
- //Activate Polygon Tool
- document.getElementById('startPolygon').addEventListener('click', function() {
-    toggleView(-90, 0.01, 1200); //andere functionality noch mit einbauen??? Start/ Stopp button?
-    document.getElementById('drawPolygon').style.display = 'inline-block';
-    document.getElementById('colorSelect').style.display = 'inline-block';
-    document.getElementById('stopPolygon').style.display = 'inline-block';
-    document.getElementById('zweid3dButton').style.display = "none";
-    document.getElementById('startPolygon').style.display = "none";
-    LoD2Koeln.show = false;
-    document.getElementById('LoD2Checkbox').checked = false;
-    document.getElementById('FavoritenAuswahlButton').style.display = 'none'; //disable Favoriten Auswahl
-
-  });
-
-  //Deactivate Polygon Tool
-  document.getElementById('stopPolygon').addEventListener('click', function() {
-    toggleView(-15, -0.01, 600);
-    document.getElementById('drawPolygon').style.display = 'none';
-    document.getElementById('colorSelect').style.display = 'none';
-    document.getElementById('stopPolygon').style.display = 'none';
-    document.getElementById('zweid3dButton').style.display = "block";
-    document.getElementById('startPolygon').style.display = "inline-block";
-    LoD2Koeln.show = true;
-    document.getElementById('LoD2Checkbox').checked = true;
-    document.getElementById('FavoritenAuswahlButton').style.display = 'inline-block'; //enable Favoriten Auswahl
-  });
-
-  //Polygon Function
-  var polygonEntitiesArray = [];
-
-// Update the polygon counter display
-function updatePolygonCounter() {
-    document.getElementById('counterButton2').innerHTML = `<strong>Polygone: ${polygonEntitiesArray.length}</strong>`;
-    if (polygonEntitiesArray.length > 0) {
-        document.getElementById('counterButton2').style.display = 'inline-block';
-        document.getElementById('deletePolygon').style.display = 'inline-block';
-    } else {
-        document.getElementById('counterButton2').style.display = 'none';
-        document.getElementById('deletePolygon').style.display = 'none';
-    }
-}
-
-//Draw Helper
-var drawHelper = new DrawHelper(viewer);
-var toolbar = drawHelper.addToolbar(document.getElementById('cesiumContainer'), {
-    buttons: ['polygon']
-});
-toolbar.addListener('polygonCreated', function(event) {
-    var polygon = event.primitive;
-    var positions = polygon.positions;
-    var id = generateRandomId();  //generate random id for the polygon
-
-    // Convert positions to a JSON-friendly format
-    var positionsArray = positions.map(function(cartesian) {
-        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-        return {
-            longitude: Cesium.Math.toDegrees(cartographic.longitude),
-            latitude: Cesium.Math.toDegrees(cartographic.latitude),
-            height: cartographic.height
-        };
-    });
-
-    // Get the selected color from the color picker (or wherever you're storing it)
-    var selectedColor = document.getElementById('colorSelect').value;
-
-    // Get existing polygons from localStorage
-    var savedPolygons = JSON.parse(localStorage.getItem('polygons') || '[]');
-
-    // Add new polygon with its color to the array
-    savedPolygons.push({
-        positions: positionsArray,
-        color: selectedColor,
-        customInfobox2: true // to enable custom infobox
-    });
-
-    // Save updated polygons array to localStorage
-    localStorage.setItem('polygons', JSON.stringify(savedPolygons));
-
-    console.log('Polygon created and saved:', positionsArray, selectedColor);
-});
-
-function loadSavedPolygons() {
-    var savedPolygons = JSON.parse(localStorage.getItem('polygons') || '[]');
     
-    savedPolygons.forEach(function(savedPolygon) {
-        var positions = savedPolygon.positions.map(function(position) {
-            return Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude, position.height);
-        });
-
-        var selectedColor = savedPolygon.color;
-
-        var polygonEntity = viewer.entities.add({
-          id: savedPolygon.id, // use saved id
-            polygon: {
-                hierarchy: positions,
-                material: Cesium.Color.fromCssColorString(selectedColor).withAlpha(0.5),
-                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            },
-            id: savedPolygon.id, //use saved id,
-            customInfobox2: true // to enable custom infobox
-        });
-
-        // Add the loaded polygon entity to the array
-        polygonEntitiesArray.push(polygonEntity);
-    });
-    //Update the polygon counter
-    updatePolygonCounter();
-}
-
-// Call this function when your app starts
-loadSavedPolygons();
-
-document.getElementById('drawPolygon').addEventListener('click', function() {
-    var selectedColor = document.getElementById('colorSelect').value;
-      
-    drawHelper.startDrawingPolygon({
-        callback: function(positions) {
-            console.log('Polygon positions:', positions);
-            var id = generateRandomId();  //generate random id for the polygon
-            var polygonEntity = viewer.entities.add({
-                polygon: {
-                    hierarchy: positions,
-                    material: Cesium.Color[selectedColor.toUpperCase()].withAlpha(0.5),
-                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                },
-                id: id, //store id as attributes
-                customInfobox2: true // to enable custom infobox
-            });
-
-            // Add the polygon entity to the array
-            polygonEntitiesArray.push(polygonEntity);
-
-            // Save the new polygon to localStorage with its color (if needed)
-            var positionsArray = positions.map(function(cartesian) {
-                var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-                return {
-                    longitude: Cesium.Math.toDegrees(cartographic.longitude),
-                    latitude: Cesium.Math.toDegrees(cartographic.latitude),
-                    height: cartographic.height
-                };
-            });
-
-            var savedPolygons = JSON.parse(localStorage.getItem('polygons') || '[]');
-            savedPolygons.push({
-                positions: positionsArray,
-                color: selectedColor,
-                id: id,
-                customInfobox2: true // to enable custom infobox
-            });
-            localStorage.setItem('polygons', JSON.stringify(savedPolygons));
-
-            //Update the polygon counter
-            updatePolygonCounter();
-        }
-        
-    });
 });
 
-function updateSavedPolygons() {
-    var savedPolygons = [];
-
-    polygonEntitiesArray.forEach(function(polygonEntity) {
-        var positions = polygonEntity.polygon.hierarchy.getValue().positions;
-
-        var positionsArray = positions.map(function(cartesian) {
-            var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-            return {
-                longitude: Cesium.Math.toDegrees(cartographic.longitude),
-                latitude: Cesium.Math.toDegrees(cartographic.latitude),
-                height: cartographic.height
-            };
-        });
-
-        savedPolygons.push({
-            positions: positionsArray,
-            color: polygonEntity.polygon.material.color.getValue().toCssColorString(),
-            id: id,
-            customInfobox2: true // to enable custom infobox
-        });
-    });
-
-    localStorage.setItem('polygons', JSON.stringify(savedPolygons));
-    //Update the polygon counter
-    updatePolygonCounter();
-    
-}
-
-viewer.screenSpaceEventHandler.setInputAction(function onRightClick(movement) {
-    var pickedObject = viewer.scene.pick(movement.position);
-    if (Cesium.defined(pickedObject)) {
-        var polygonEntity = pickedObject.id;
-
-        // Check if this entity is a polygon by checking for polygon-specific attributes
-        if ( polygonEntitiesArray.includes(polygonEntity)) {
-            // Remove the polygon from the viewer
-            viewer.entities.remove(polygonEntity);
-
-            // Remove the polygon from the polygonEntitiesArray
-            polygonEntitiesArray = polygonEntitiesArray.filter(function(item) {
-                return item !== polygonEntity;
-            });
-
-            
-            // Update the polygon counter after deletion
-            updatePolygonCounter();
-
-            // Update saved polygons in localStorage
-            updateSavedPolygons();
-
-            
-
-            console.log('Polygon entity deleted:', polygonEntity);
-        }
-    }
-}, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
 
 
-//delete all Polygons
-function clearPolygons() {
-    // Remove only polygon entities
-    polygonEntitiesArray.forEach(function(polygonEntity) {
-        viewer.entities.remove(polygonEntity);
-    });
-    
-    // Clear the polygonEntitiesArray array
-    polygonEntitiesArray = [];
 
-    // Optionally, clear saved polygons from localStorage
-    localStorage.removeItem('polygons');
-
-    //Update the polygon counter
-    updatePolygonCounter();
-    
-    console.log('Polygon entities cleared');
-}
-
-
-
-// Add an event listener to the delete polygons button
-// Show the custom confirmation modal
-document.getElementById('deletePolygon').addEventListener('click', function() {
-    document.getElementById('confirmationModal2').style.display = 'flex';
-});
-
-// Handle the OK button in the custom modal
-document.getElementById('confirmDelete2').addEventListener('click', function() {
-    clearPolygons();
-    document.getElementById('confirmationModal2').style.display = 'none';
-});
-
-// Handle the Cancel button in the custom modal
-document.getElementById('cancelDelete2').addEventListener('click', function() {
-    document.getElementById('confirmationModal2').style.display = 'none';
-});
 
 //Funktionsleiste Button
 document.getElementById('header2').style.display = 'flex';
@@ -1498,19 +1223,7 @@ function hideAllMarkers() {
 
 
 
-// Function to show all polygons
-function showAllPolygons() {
-    polygonEntitiesArray.forEach(function(polygonEntity) {
-        polygonEntity.show = true;
-    });
-}
 
-// Function to hide all polygons
-function hideAllPolygons() {
-    polygonEntitiesArray.forEach(function(polygonEntity) {
-        polygonEntity.show = false;
-    });
-}
 
 
 
