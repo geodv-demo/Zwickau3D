@@ -627,7 +627,7 @@ document.getElementById('startFavorites').addEventListener('click', function () 
     showAllMarkers();
     document.getElementById('FavoritenCheckbox').checked = true;
     FavoritenAuswahl = true;
-    toggleView(-90, 0.01, 1200);
+    //toggleView(-90, 0.01, 1200);
     document.getElementById('zweid3dButton').style.display = "none";
     viewer.infoBox.container.style.display = 'none'; // Make sure Infobox does not show up when elements are clicked
     ; //disable draw Polygon while Favorite Selection
@@ -640,7 +640,7 @@ document.getElementById('stopFavorites').addEventListener('click', function () {
     showAllMarkers();
     document.getElementById('FavoritenCheckbox').checked = true;
     FavoritenAuswahl = false;
-    toggleView(-15, -0.01, 600);
+    //toggleView(-15, -0.01, 600);
     document.getElementById('zweid3dButton').style.display = "block";
     viewer.infoBox.container.style.display = 'block'; // Make sure Infobox shows up again when elements are clicked
     hideFavoriteInput();
@@ -1048,7 +1048,7 @@ document.getElementById('legendbutton').addEventListener('click', () => {
                 return Cesium.Cartesian3.fromDegrees(
                   Cesium.Math.toDegrees(cartographic.longitude),
                   Cesium.Math.toDegrees(cartographic.latitude),
-                  315 // Set height here
+                  314 // Set height here
                 );
               });
           
