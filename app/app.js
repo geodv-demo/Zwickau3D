@@ -991,41 +991,7 @@ document.getElementById('legendbutton').addEventListener('click', () => {
         });
        const wmsStarkregenExtrem =viewer.imageryLayers.addImageryProvider(wmsStarkregenExtremImageryProvider);
 
-      //GeoJSON Features
-        //Pegel Punkt Feature
-        //var geoJsonUrl = 'data/RheinPegel_Koeln_4326.geojson';
-
-// Load GeoJSON data into the viewer
-        // As Entity
-        const RheinPegel = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(6.96340097,50.93693404),
-            billboard: {
-                image: 'img/Hochwasser_Pegel.png',
-                scale: 1, 
-                height: 50,
-                width: 35,
-                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // Clamps the billboard to the ground
-                verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // Align the bottom of the billboard with the coordinate
-                horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-                disableDepthTestDistance: Number.POSITIVE_INFINITY, // Ensure the billboard is always visible
-                distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, Number.POSITIVE_INFINITY) // Always display the billboard
-                
-            }
-            /*label: {
-                text: 'Rhein Pegel Köln', // The text of the label
-                font: '14pt sans-serif', // The font of the label text
-                fillColor: Cesium.Color.WHITE, // The color of the label text
-                outlineColor: Cesium.Color.BLACK, // The outline color of the label text
-                outlineWidth: 2, // The outline width of the label text
-                style: Cesium.LabelStyle.FILL_AND_OUTLINE, // The style of the label text
-                verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // Align the bottom of the label with the coordinate
-                pixelOffset: new Cesium.Cartesian2(0, -40), // Offset the label to be above the billboard
-                disableDepthTestDistance: Number.POSITIVE_INFINITY, // Ensure the label is always visible
-                distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, Number.POSITIVE_INFINITY) // Always display the label
-  
-            }
-            */
-        })
+      
 
        //Netzplanung
           const resource1 = await Cesium.IonResource.fromAssetId(3113309);
