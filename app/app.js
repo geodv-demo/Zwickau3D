@@ -1116,7 +1116,7 @@ const resource4 = await Cesium.IonResource.fromAssetId(3113762);
 
     //initial layer configuration
     OSMbuildingTileset.show = true;
-    GoogletilesetKoeln.show = false;
+  //  GoogletilesetKoeln.show = false;
     
         // Important for WMS services --> need to be stored as const to be able to use the .show property 
     wmsStarkregenSelten.show = false; 
