@@ -889,11 +889,11 @@ document.getElementById('legendbutton').addEventListener('click', () => {
     viewer.scene.primitives.add(OSMbuildingTileset);   
 
     //GooglePhotorealistic Tiles   --> während Entwicklung deaktivieren!!!
-    const GoogletilesetKoeln = await Cesium.Cesium3DTileset.fromUrl(
-     "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyBxBAlQUUqEie5k66Ki7Oc5OFJise2Jud8"
-  );
-    GoogletilesetKoeln.show = false;
-    viewer.scene.primitives.add(GoogletilesetKoeln);
+    //const GoogletilesetKoeln = await Cesium.Cesium3DTileset.fromUrl(
+     //"https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyBxBAlQUUqEie5k66Ki7Oc5OFJise2Jud8"
+  //);
+    //GoogletilesetKoeln.show = false;
+    //viewer.scene.primitives.add(GoogletilesetKoeln);
     
 
 
